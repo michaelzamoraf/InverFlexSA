@@ -1,0 +1,15 @@
+@APIInverFlexSA_HostAddress = https://localhost:7219
+
+### Autenticación: sustituir por una cuenta de demostración
+POST {{APIInverFlexSA_HostAddress}}/api/v1/Auth/token
+Content-Type: application/json
+
+{
+  "email": "cliente1@inverflex.com",
+  "password": "Cliente123!"
+}
+
+### Después de obtener el token, reemplazar {{token}} y el GUID del cliente.
+GET {{APIInverFlexSA_HostAddress}}/api/v1/Portfolios/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+Accept: application/json
