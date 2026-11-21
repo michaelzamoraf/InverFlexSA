@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIInverFlexSA.Infrastructure.Persistence;
@@ -11,8 +12,10 @@ namespace APIInverFlexSA.Controllers
     /// </summary>
     /// <param name="dbContext"></param>
     /// -----------------------------------------------------------------------------------------------------------
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "admin")]
     public class AdminController(AppDbContext dbContext) : ControllerBase

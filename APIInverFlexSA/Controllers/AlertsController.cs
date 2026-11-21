@@ -4,6 +4,7 @@ using APIInverFlexSA.Application.Interfaces;
 using APIInverFlexSA.Domain.Entities;
 using APIInverFlexSA.Domain.Interfaces;
 using APIInverFlexSA.Infrastructure.Persistence;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,9 @@ namespace APIInverFlexSA.Controllers;
 /// Administra alertas de precio y notificaciones del cliente autenticado.
 /// </summary>
 /// -----------------------------------------------------------------------------------------------------------
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [ApiController]
 [Authorize(Roles = "cliente")]
 [Produces("application/json")]

@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIInverFlexSA.Controllers
@@ -7,8 +8,10 @@ namespace APIInverFlexSA.Controllers
     /// Endpoints de consulta para asesores financieros.
     /// </summary>
     /// -----------------------------------------------------------------------------------------------------------
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     //[Produces("application/json")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "asesor")]
     public class AdvisorsController : ControllerBase

@@ -1,4 +1,5 @@
 using APIInverFlexSA.Application.Features.Portfolios;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,8 +10,10 @@ namespace APIInverFlexSA.Controllers
     /// Endpoints de consulta de carteras de clientes.
     /// </summary>
     /// -----------------------------------------------------------------------------------------------------------
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class PortfoliosController(IMediator mediator) : ControllerBase
     {

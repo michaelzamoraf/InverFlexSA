@@ -8,6 +8,7 @@ using APIInverFlexSA.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using System.Reflection;
+using Asp.Versioning;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,22 @@ builder.Services.AddSingleton<IDistributedCacheService, NoOpDistributedCacheServ
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddResponseCaching();
 builder.Services.AddOpenApi();
+
+#region Versionamiento de API
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+#endregion
 
 #region MediatR
 

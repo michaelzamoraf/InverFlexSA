@@ -1,6 +1,7 @@
 using APIInverFlexSA.Application.Features.Orders;
 using APIInverFlexSA.Application.Features.Queries;
 using APIInverFlexSA.Domain.Entities;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 namespace APIInverFlexSA.Controllers
@@ -11,8 +12,10 @@ namespace APIInverFlexSA.Controllers
     /// </summary>
     /// <param name="mediator"></param>
     /// -----------------------------------------------------------------------------------------------------------
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class OrdersController(IMediator mediator) : ControllerBase
     {
@@ -38,7 +41,7 @@ namespace APIInverFlexSA.Controllers
         {
             var clientId = request.ClientId;
             var result = await _mediator.Send(new CreateOrderCommand(clientId, request.InstrumentId, request.Type, request.Quantity), ct);
-            return Created($"/api/orders/history?clientId={clientId}", result);
+            return Created($"/api/v1/orders/history?clientId={clientId}", result);
         }
 
         /// -----------------------------------------------------------------------------------------------------------

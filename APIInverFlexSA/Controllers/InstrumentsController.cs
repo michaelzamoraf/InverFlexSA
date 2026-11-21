@@ -1,5 +1,6 @@
 using APIInverFlexSA.Application.Features.Queries;
 using APIInverFlexSA.Domain.Entities;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +12,10 @@ namespace APIInverFlexSA.Controllers
     /// </summary>
     /// <param name="mediator"></param>
     /// -----------------------------------------------------------------------------------------------------------
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class InstrumentsController(IMediator mediator) : ControllerBase
     {
