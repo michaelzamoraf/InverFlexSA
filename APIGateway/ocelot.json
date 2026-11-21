@@ -1,0 +1,390 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Auth/token",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Auth/token",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "Priority": 1,
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Instruments",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Instruments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "Priority": 10
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Orders",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Orders",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "Priority": 20
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Orders/history",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Orders/history",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "Priority": 30
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Portfolios/{clientId}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Portfolios/{clientId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "Priority": 40
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Portfolios/legacy/{clientId}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Portfolios/legacy/{clientId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "Priority": 50
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Advisors/reports/performance",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Advisors/reports/performance",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "Priority": 110
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Orders/{orderId}/approve",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Orders/{orderId}/approve",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "Priority": 120
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/v{version}/Admin/assign-client",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "DownstreamPathTemplate": "/api/v{version}/Admin/assign-client",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "Priority": 210
+    },
+    {
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "UpstreamPathTemplate": "/gateway/v{version}/Alerts",
+      "UpstreamHttpMethod": ["POST"],
+      "DownstreamPathTemplate": "/api/v{version}/Alerts",
+      "Priority": 220
+    },
+    {
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "UpstreamPathTemplate": "/gateway/v{version}/Alerts",
+      "UpstreamHttpMethod": ["GET"],
+      "DownstreamPathTemplate": "/api/v{version}/Alerts",
+      "Priority": 221
+    },
+    {
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "UpstreamPathTemplate": "/gateway/v{version}/Alerts/{id}",
+      "UpstreamHttpMethod": ["DELETE"],
+      "DownstreamPathTemplate": "/api/v{version}/Alerts/{id}",
+      "Priority": 222
+    },
+    {
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "UpstreamPathTemplate": "/gateway/v{version}/Alerts/notifications",
+      "UpstreamHttpMethod": ["GET"],
+      "DownstreamPathTemplate": "/api/v{version}/Alerts/notifications",
+      "Priority": 223
+    },
+    {
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5210
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "EnableHeaders": true,
+        "Period": "1m",
+        "Wait": "60s",
+        "Limit": 30
+      },
+      "UpstreamPathTemplate": "/gateway/v{version}/Alerts/notifications/{id}/read",
+      "UpstreamHttpMethod": ["PATCH"],
+      "DownstreamPathTemplate": "/api/v{version}/Alerts/notifications/{id}/read",
+      "Priority": 224
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5100",
+    "RateLimitOptions": {
+      "ClientIdHeader": "Oc-ClientId",
+      "KeyPrefix": "InverFlexSA",
+      "StatusCode": 429,
+      "QuotaMessage": "Se ha excedido el límite de solicitudes permitido."
+    }
+  }
+}

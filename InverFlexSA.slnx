@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="APIInverFlexSA/APIInverFlexSA.csproj" />
   <Project Path="APIInverFlexSATest/APIInverFlexSATest.csproj" />
+  <Project Path="APIGateway/APIGateway.csproj" />
 </Solution>
