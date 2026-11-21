@@ -36,8 +36,14 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 builder.Services.AddScoped<IPriceAlertRepository, PriceAlertRepository>();
 
-/// <summary>Registra una implementación sin almacenamiento para ejecutar la API sin Redis.</summary>
-builder.Services.AddSingleton<IDistributedCacheService, NoOpDistributedCacheService>();
+// Redis: caché distribuida compartida entre instancias del API.
+var redisConfiguration = builder.Configuration["Redis:Configuration"] ?? "localhost:6379";
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConfiguration;
+    options.InstanceName = builder.Configuration["Redis:InstanceName"] ?? "InverFlex:";
+});
+builder.Services.AddScoped<IDistributedCacheService, RedisDistributedCacheService>();
 builder.Services.AddScoped<IMarketPriceService, MockMarketPriceService>();
 builder.Services.AddScoped<IAlertEvaluationService, AlertEvaluationService>();
 

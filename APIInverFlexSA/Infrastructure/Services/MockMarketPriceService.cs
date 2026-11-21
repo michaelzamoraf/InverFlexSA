@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using APIInverFlexSA.Application.Interfaces;
 using APIInverFlexSA.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -6,18 +7,19 @@ namespace APIInverFlexSA.Infrastructure.Services;
 
 /// -----------------------------------------------------------------------------------------------------------
 /// <summary>
-/// Servicio de precios simulado; genera una variación acotada sobre el precio base.
+/// Servicio de precios simulado. Genera una caminata aleatoria acotada alrededor del precio base
+/// para que las alertas puedan dispararse durante las demostraciones.
 /// </summary>
 /// -----------------------------------------------------------------------------------------------------------
 public sealed class MockMarketPriceService(AppDbContext db) : IMarketPriceService
 {
+    private static readonly ConcurrentDictionary<string, decimal> LastPrices = new(StringComparer.OrdinalIgnoreCase);
+
     /// -----------------------------------------------------------------------------------------------------------
     /// <summary>
-    /// Obtiene un precio simulado para un instrumento activo.
+    /// Obtiene una cotización simulada: cada consulta modifica el último precio hasta +/-1% y
+    /// mantiene el precio dentro del rango de 50%-150% del precio base.
     /// </summary>
-    /// <param name="ticker">Ticker del instrumento.</param>
-    /// <param name="ct">Token para cancelar la operación.</param>
-    /// <returns>Precio base con una variación aleatoria acotada.</returns>
     /// -----------------------------------------------------------------------------------------------------------
     public async Task<decimal> GetCurrentPriceAsync(string ticker, CancellationToken ct = default)
     {
@@ -25,8 +27,17 @@ public sealed class MockMarketPriceService(AppDbContext db) : IMarketPriceServic
             .FirstOrDefaultAsync(x => x.Ticker == ticker && x.IsActive, ct)
             ?? throw new KeyNotFoundException($"No existe el instrumento {ticker}.");
 
-        //Variación demostrativa de hasta +/- 2%; no representa cotizaciones reales.
-        var variation = (decimal)(Random.Shared.NextDouble() * 0.04 - 0.02);
-        return Math.Round(instrument.BasePrice * (1m + variation), 4);
+        var minimum = instrument.BasePrice * 0.50m;
+        var maximum = instrument.BasePrice * 1.50m;
+        var next = LastPrices.AddOrUpdate(
+            instrument.Ticker,
+            instrument.BasePrice,
+            (_, previous) =>
+            {
+                var variation = (decimal)(Random.Shared.NextDouble() * 0.02 - 0.01);
+                return Math.Clamp(previous * (1m + variation), minimum, maximum);
+            });
+
+        return Math.Round(next, 4);
     }
 }

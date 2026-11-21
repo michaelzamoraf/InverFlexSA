@@ -1,4 +1,5 @@
 using APIInverFlexSA.Application.Features.Queries;
+using APIInverFlexSA.Application.Exceptions;
 using APIInverFlexSA.Domain.Entities;
 using Asp.Versioning;
 using MediatR;
@@ -46,8 +47,16 @@ namespace APIInverFlexSA.Controllers
             [FromQuery] InstrumentCategory? category, [FromQuery] string? sector,
             [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken ct = default)
         {
-            var (items, total) = await _mediator.Send(new GetInstrumentsQuery(category, sector, page, pageSize), ct);
-            return Ok(new { Total = total, Page = page, PageSize = pageSize, Data = items });
+            try
+            {
+                var (items, total) = await _mediator.Send(new GetInstrumentsQuery(category, sector, page, pageSize), ct);
+                return Ok(new { Total = total, Page = page, PageSize = pageSize, Data = items });
+            }
+            catch (MarketPriceUnavailableException ex)
+            {
+                return Problem(title: "Precio de mercado no disponible", detail: ex.Message,
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
         }
 
         #endregion

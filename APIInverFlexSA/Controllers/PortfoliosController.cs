@@ -1,4 +1,5 @@
 using APIInverFlexSA.Application.Features.Portfolios;
+using APIInverFlexSA.Application.Exceptions;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -45,8 +46,15 @@ namespace APIInverFlexSA.Controllers
             if (!authResult.Succeeded)
                 return Forbid();
 
-            var result = await _mediator.Send(new GetClientPortfolioQuery(clientId), ct);
-            return Ok(result);
+            try
+            {
+                var result = await _mediator.Send(new GetClientPortfolioQuery(clientId), ct);
+                return Ok(result);
+            }
+            catch (MarketPriceUnavailableException ex)
+            {
+                return Problem(title: "Precio de mercado no disponible", detail: ex.Message, statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
         }
 
         //Endpoint de ejemplo marcado para depreciación futura
@@ -69,8 +77,15 @@ namespace APIInverFlexSA.Controllers
                 return Forbid();
 
             Response.Headers.Append("Deprecated", "true");
-            var result = await _mediator.Send(new GetClientPortfolioQuery(clientId), ct);
-            return Ok(result);
+            try
+            {
+                var result = await _mediator.Send(new GetClientPortfolioQuery(clientId), ct);
+                return Ok(result);
+            }
+            catch (MarketPriceUnavailableException ex)
+            {
+                return Problem(title: "Precio de mercado no disponible", detail: ex.Message, statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
         }
 
         #endregion
