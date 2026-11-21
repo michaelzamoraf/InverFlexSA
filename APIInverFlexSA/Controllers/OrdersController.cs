@@ -3,7 +3,10 @@ using APIInverFlexSA.Application.Features.Queries;
 using APIInverFlexSA.Domain.Entities;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 namespace APIInverFlexSA.Controllers
 {
     /// -----------------------------------------------------------------------------------------------------------
@@ -17,6 +20,7 @@ namespace APIInverFlexSA.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
+    [Authorize]
     public class OrdersController(IMediator mediator) : ControllerBase
     {
         #region Atributos
@@ -31,17 +35,18 @@ namespace APIInverFlexSA.Controllers
         /// <summary>
         /// Crea una orden para el cliente autenticado.
         /// </summary>
-        /// <param name="request">Identificador del cliente, instrumento, tipo y cantidad.</param>
+        /// <param name="request">Instrumento, tipo y cantidad.</param>
         /// <param name="ct">Cancelación.</param>
         /// <returns>Orden creada.</returns>
         /// -----------------------------------------------------------------------------------------------------------
         [HttpPost]
+        [Authorize(Roles = "cliente")]
         [ApiExplorerSettings(GroupName = "cliente")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request, CancellationToken ct)
         {
-            var clientId = request.ClientId;
+            var clientId = Guid.Parse(User.FindFirstValue("userId")!);
             var result = await _mediator.Send(new CreateOrderCommand(clientId, request.InstrumentId, request.Type, request.Quantity), ct);
-            return Created($"/api/v1/orders/history?clientId={clientId}", result);
+            return Created("/api/v1/orders/history", result);
         }
 
         /// -----------------------------------------------------------------------------------------------------------
@@ -49,15 +54,19 @@ namespace APIInverFlexSA.Controllers
         /// Aprueba una orden pendiente de importe elevado.
         /// </summary>
         /// <param name="orderId">Orden a aprobar.</param>
-        /// <param name="request">Identificador del actor y condición de administrador para la aprobación didáctica sin JWT.</param>
         /// <param name="ct">Cancelación.</param>
         /// <returns>Respuesta sin contenido.</returns>
         /// -----------------------------------------------------------------------------------------------------------
         [HttpPost("{orderId:guid}/approve")]
+        [Authorize(Roles = "asesor,admin")]
         [ApiExplorerSettings(GroupName = "asesor")]
-        public async Task<IActionResult> ApproveHighValueOrder(Guid orderId, [FromBody] ApproveOrderRequest request, CancellationToken ct)
+        public async Task<IActionResult> ApproveHighValueOrder(Guid orderId, CancellationToken ct)
         {
-            await _mediator.Send(new ApproveOrderCommand(orderId, request.ActorId, request.IsAdmin), ct);
+            if (!Guid.TryParse(User.FindFirstValue("userId"), out var actorId))
+                return Forbid();
+
+            var isAdmin = User.IsInRole("admin");
+            await _mediator.Send(new ApproveOrderCommand(orderId, actorId, isAdmin), ct);
             return NoContent();
         }
 
@@ -65,7 +74,6 @@ namespace APIInverFlexSA.Controllers
         /// <summary>
         /// Obtiene el historial de órdenes visible para el usuario.
         /// </summary>
-        /// <param name="clientId">Identificador del cliente consultado.</param>
         /// <param name="instrumentId">Filtro de instrumento.</param>
         /// <param name="status">Filtro de estado.</param>
         /// <param name="from">Fecha inicial.</param>
@@ -76,12 +84,17 @@ namespace APIInverFlexSA.Controllers
         /// <returns>Historial paginado.</returns>
         /// -----------------------------------------------------------------------------------------------------------
         [HttpGet("history")]
+        [Authorize(Roles = "cliente")]
         [ApiExplorerSettings(GroupName = "cliente")]
         public async Task<IActionResult> GetOrderHistory(
-            [FromQuery] Guid clientId, [FromQuery] Guid? instrumentId, [FromQuery] OrderStatus? status,
+            [FromQuery] Guid? instrumentId, [FromQuery] OrderStatus? status,
             [FromQuery] DateTime? from, [FromQuery] DateTime? to,
             [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken ct = default)
         {
+            var userIdValue = User.FindFirstValue("userId");
+            if (!Guid.TryParse(userIdValue, out var clientId))
+                return Forbid();
+
             if (page < 1 || pageSize < 1 || pageSize > 100)
                 return BadRequest(new { message = "page debe ser mayor que cero y pageSize debe estar entre 1 y 100." });
 
@@ -106,12 +119,7 @@ namespace APIInverFlexSA.Controllers
         /// <param name="Type">Tipo de operación.</param>
         /// <param name="Quantity">Cantidad.</param>
         /// -----------------------------------------------------------------------------------------------------------
-        public record CreateOrderRequest(Guid ClientId, Guid InstrumentId, OrderType Type, decimal Quantity);
-
-        /// <summary>Identidad del actor que aprueba una orden en el modo sin autenticación.</summary>
-        /// <param name="ActorId">Identificador del asesor o administrador.</param>
-        /// <param name="IsAdmin">Indica si el actor tiene rol de administrador.</param>
-        public record ApproveOrderRequest(Guid ActorId, bool IsAdmin);
+        public record CreateOrderRequest(Guid InstrumentId, OrderType Type, decimal Quantity);
 
         #endregion
     }

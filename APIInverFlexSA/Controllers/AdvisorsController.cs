@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIInverFlexSA.Controllers
@@ -13,6 +14,7 @@ namespace APIInverFlexSA.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
+    [Authorize(Roles = "asesor,admin")]
     [ApiExplorerSettings(GroupName = "asesor")]
     public class AdvisorsController : ControllerBase
     {

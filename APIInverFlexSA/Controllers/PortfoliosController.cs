@@ -1,6 +1,7 @@
 using APIInverFlexSA.Application.Features.Portfolios;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIInverFlexSA.Controllers
@@ -15,11 +16,13 @@ namespace APIInverFlexSA.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
-    public class PortfoliosController(IMediator mediator) : ControllerBase
+    [Authorize]
+    public class PortfoliosController(IMediator mediator, IAuthorizationService authService) : ControllerBase
     {
         #region Atributos 
 
         private readonly IMediator _mediator = mediator;
+        private readonly IAuthorizationService _authService = authService;
 
         #endregion
 
@@ -37,6 +40,11 @@ namespace APIInverFlexSA.Controllers
         [ApiExplorerSettings(GroupName = "cliente")]
         public async Task<IActionResult> GetPortfolio(Guid clientId, CancellationToken ct)
         {
+            //Valida mediante Policy personalizada si es dueño, asesor asignado o admin
+            var authResult = await _authService.AuthorizeAsync(User, clientId, "CanAccessClientPortfolio");
+            if (!authResult.Succeeded)
+                return Forbid();
+
             var result = await _mediator.Send(new GetClientPortfolioQuery(clientId), ct);
             return Ok(result);
         }
@@ -54,6 +62,12 @@ namespace APIInverFlexSA.Controllers
         [ApiExplorerSettings(GroupName = "cliente")]
         public async Task<IActionResult> GetLegacyPortfolio(Guid clientId, CancellationToken ct)
         {
+            var authResult = await _authService.AuthorizeAsync(
+                User, clientId, "CanAccessClientPortfolio");
+
+            if (!authResult.Succeeded)
+                return Forbid();
+
             Response.Headers.Append("Deprecated", "true");
             var result = await _mediator.Send(new GetClientPortfolioQuery(clientId), ct);
             return Ok(result);

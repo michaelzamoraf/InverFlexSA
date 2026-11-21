@@ -2,6 +2,7 @@ using APIInverFlexSA.Application.Features.Queries;
 using APIInverFlexSA.Domain.Entities;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIInverFlexSA.Controllers
@@ -17,6 +18,7 @@ namespace APIInverFlexSA.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
+    [Authorize]
     public class InstrumentsController(IMediator mediator) : ControllerBase
     {
         #region Atributos
