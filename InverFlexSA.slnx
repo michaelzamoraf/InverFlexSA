@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="APIInverFlexSA/APIInverFlexSA.csproj" />
+  <Project Path="APIInverFlexSATest/APIInverFlexSATest.csproj" />
 </Solution>
